@@ -1,0 +1,222 @@
+import util
+from board import Board
+import numpy as np
+from copy import deepcopy
+from time import time
+from random import choice, randint, shuffle
+
+import sys
+
+sys.setrecursionlimit(1000000)  # 例如这里设置为一百万
+
+
+class GreedyAgent:
+    ''' 贪心智能体 '''
+
+    def __init__(self, player):
+        """
+        初始化
+        :param player: -1表示黑方，1表示白方
+        """
+        self.player = player
+
+    def act(self, queue):
+        """
+        input: queue包含棋盘的队列
+        return: 选择最佳拓展
+        """
+        board = queue.get()  # 获取棋盘
+        best_move = util.find_best_move(self.player, board)
+        queue.put(best_move)                                     # 返回最佳落子点
+
+
+class Node:
+    ''' node of the search tree '''
+
+    def __init__(self, parent, player, move=None):
+        self.succ = 0
+        self.total = 0
+        self.child = []
+        # {(8, 8), (8, 7), (6, 8), (6, 7), (7, 6), (8, 6), (6, 6), (7, 8)}
+        self.unexpanded = set([])
+        self.parent = parent
+        self.player = player
+        self.move = move
+
+    def __repr__(self):
+        return f'{self.move}=>{self.succ}/{self.total}={self.ucb}'
+
+    def __hash__(self):
+        return id(self)
+
+
+class Agent:
+    ''' 蒙特卡洛树搜索 '''
+
+    def __init__(self, player, time_limit=30):
+        """
+        蒙特卡洛树搜索策略初始化
+        :param time_limit: 蒙特卡洛树搜索每步的搜索时间步长
+        :param tick:记录开始搜索的时间
+        :param player: 1表示白方，-1表示黑方
+        """
+        self.time_limit = time_limit
+        self.tick = 0
+        self.player = player                                            # 执棋方
+        self.cnt = 0                                                    # 记录模拟游戏的次数
+        self.score = []
+
+    def limit_branch(self, node, board):
+        legal_moves = board.get_legal_actions()
+        limit_moves = []
+        queue = util.PriorityQueue()
+        for move in legal_moves:
+            queue.push(move, -self.score[move[0], move[1]])
+        while True:
+            if len(limit_moves) == 0:
+                limit_moves.append(queue.pop())
+            else:
+                move = queue.pop()
+                if self.score[move[0], move[1]] < self.score[limit_moves[0][0], limit_moves[0][1]]:
+                    break
+                else:
+                    limit_moves.append(move)
+        node.unexpanded = set(limit_moves)
+
+    def mcts(self, queue):
+        """
+        蒙特卡洛树搜索，在时间限制范围内，拓展节点搜索结果
+        input: queue包含棋盘的队列
+        return: 选择最佳拓展
+        """
+
+        self.cnt = 0
+        self.tick = time()                                              # 更新开始搜索的时间
+
+        board = queue.get()  # 获取棋盘
+
+        self.score = util.score_func(self.player, board)
+
+        # 以当前棋局状态为根节点
+        root = Node(None, self.player)
+        #root.unexpanded = set(board.get_legal_actions())
+        self.limit_branch(root, board)  # 猜的：从所有合法的行动中，挑出比较好的几个，用来扩展的
+
+        if len(root.unexpanded) == 1:  # 如果只剩下唯一的走的点
+            queue.put(root.unexpanded.pop())
+            return
+
+        ''' 蒙特卡洛树搜索算法，在时间限制范围内循环进行步骤1至4 '''
+        while time() - self.tick < self.time_limit - 1e-4:                 # 在时长允许范围内蒙特卡洛树搜索算法继续选择和扩展节点
+            # 深拷贝当前棋局状态，以方便智能体在进行模拟对局的时候
+            sim_board = deepcopy(board)
+            # 不改变当前对局状态
+            # 步骤1.从蒙特卡洛树的根节点开始，向下递归选择子节点
+            node = self.selection(root, sim_board)
+
+            # 步骤2. 随机扩展一个未被扩展过的后继边缘节点M
+            node = self.expansion(node, sim_board)
+
+            # 步骤3. 从节点M出发，模拟对局以此来扩展蒙特卡洛搜索树，并返回模拟结果
+            score = self.simulation(node, sim_board)
+
+            # 步骤4. 回溯更新
+            self.backpropagation(node, score)
+
+        ''' 从根节点的子节点中搜索最佳落子点(被扩展最多的子节点) '''
+        best_total = -1                                                  # 子节点中最大的扩展次数
+        best_move = []                                                   # 被扩展最多次的子节点
+        for child in root.child:                                         # 遍历所有子节点
+            if child.total > best_total:                                 # 寻找最大扩展次数
+                best_total = child.total
+                best_move = []
+                best_move.append(child.move)
+            elif child.total == best_total:
+                best_move.append(child.move)
+
+        print("模拟对弈次数：", self.cnt)
+        # 返回最佳落子点
+        queue.put(choice(best_move))
+
+    def selection(self, node, board):
+        """
+        步骤1，节点选择
+        :return: 搜索树向下递归选择子节点
+        """
+
+        ''' 从搜索树的根节点开始，向下递归选择子节点，直至到达叶子节点或者到达具有还未被扩展过子节点 '''
+        # YOUR CODE HERE
+
+        # 判断是不是叶子节点，即游戏是否结束：
+        terminate, winner = board.is_terminated()  # terminate ：0表示没结束
+        if terminate != 0:
+            return node
+
+        # 如果是没扩展过的点，直接返回
+        if node.total == 0:  # 扩展次数为0表示没扩展过
+            return node
+
+        maxUCB = node.succ/node.total+2 * \
+            np.sqrt(np.log(self.cnt)/node.total)  # 最大的ucb，一开始是当前node
+        retNode = node  # 最终选择的返回的节点
+        for childNode in node.child:
+            tempNode = self.selection(childNode, board)  # 向下递归，每次都返回最应该扩展的点
+            tempUCB = tempNode.succ/tempNode.total+2 * \
+                np.sqrt(np.log(self.cnt)/tempNode.total)  # 子节点的ucb
+
+            # 待定，判断total（分母）会不会是0
+
+            if tempUCB > maxUCB:  # 如果递归返回的节点ucb大于当前的ucb
+                maxUCB = tempUCB
+                retNode = tempNode
+
+        return retNode
+
+    def expansion(self, node, board):
+        """
+        步骤2，节点扩展
+        """
+
+        # YOUR CODE HERE
+        # 从可拓展的点里面拿一个出来
+        new_pos = node.unexpanded.pop()  # 扩展的点下的位置
+        # # 下到棋盘中：
+        # board.move(new_pos,self.player)
+        # 创建一个子节点
+        new_node = Node(parent=node, player=self.player, move=new_pos)
+        self.limit_branch(new_node, board)  # 猜的：从所有合法的行动中，挑出比较好的几个，用来扩展的
+        node.child.append(new_node)
+
+        return new_node
+
+    def simulation(self, node, board):    # roll out
+        """
+        步骤3，模拟扩展搜索树
+        """
+
+        # YOUR CODE HERE
+        # 双方随机下棋，直到terminate为止
+
+        board.move(node.move, node.player)  # 下棋
+
+        while True:  # 开始随机下棋
+            # 判断棋局有没有结束
+            terminate, winner = board.is_terminated()  # terminate ：0表示没结束
+            if terminate != 0:
+                return winner  # 1是赢了，0是平局，-1是输了
+
+            curPlayer = node.player * (-1)  # 切换下棋的人
+            tempMove = util.random_move(curPlayer, board)  # 随机下棋
+            board.move(tempMove, curPlayer)
+
+    def backpropagation(self, node, score):
+        """
+        步骤4，反向传播，回溯更新模拟路径中的节点奖励
+        """
+        # YOUR CODE HERE
+        self.cnt += 1  # 模拟次数加1
+        while node != None:  # 如果当前节点不是none
+            node.succ += score  # 得分加
+            node.total += 1  # 拓展次数加
+
+            node = node.parent  # 转到parent
