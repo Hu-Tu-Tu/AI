@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)https://inst.eecs.berkeley.edu/~cs188/su20/project2/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://inst.eecs.berkeley.edu/~cs188/su20/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://inst.eecs.berkeley.edu/~cs188/su20/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://inst.eecs.berkeley.edu/~cs188/su20/favicon-16x16.png">
+  <link rel="manifest" href="https://inst.eecs.berkeley.edu/~cs188/su20/site.webmanifest">
+  <link rel="mask-icon" href="https://inst.eecs.berkeley.edu/~cs188/su20/safari-pinned-tab.svg" color="#fdb515">
+  <meta name="apple-mobile-web-app-title" content="CS 188">
+  <meta name="application-name" content="CS 188">
+  <meta name="msapplication-TileColor" content="#3b7ea1">
+  <meta name="msapplication-TileImage" content="/~cs188/su20/mstile-144x144.png">
+  <meta name="theme-color" content="#3b7ea1">
+
+  <title>
+    
+      Project 2 - Multi-Agent Search - CS 188: Introduction to Artificial Intelligence, Summer 2020
+    
+  </title>
+
+  <link rel="stylesheet" href="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/main.css" type="text/css">
+
+  <script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/jquery.min.js.下载"></script>
+  <script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/bootstrap.min.js.下载" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/bootstrap-toc.min.js.下载"></script>
+
+
+  <script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/jquery.qtip.min.js.下载" type="text/javascript"></script>
+  <script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/moment.min.js.下载"></script>
+  <script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/fullcalendar.min.js.下载"></script>
+
+  <script type="text/x-mathjax-config;executed=true">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      CommonHTML: {
+        linebreaks: { automatic: true },
+        scale: 90,
+        preferredFont: "Latin Modern"
+      },
+      "HTML-CSS": {
+        linebreaks: { automatic: true },
+        scale: 90,
+        preferredFont: "Latin Modern"
+      },
+     SVG: {
+       linebreaks: { automatic: true },
+       scale: 90,
+       preferredFont: "Latin Modern"
+     }
+    });
+  </script>
+  <script type="text/javascript" async="" src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/MathJax.js.下载"></script>
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover, .MJXp-munder {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > *, .MJXp-munder > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+
+<body data-spy="scroll" data-target="#toc"><div id="MathJax_Message" style="display: none;"></div>
+  <div id="navscroll">
+  <nav id="navbar" class="navbar navbar-light navbar-expand-lg align-items-center">
+    <div class="container">
+      <a class="navbar-brand" href="https://inst.eecs.berkeley.edu/~cs188/su20/" style="color: #000;"><strong>CS 188</strong> | Summer 2020</a>
+      <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="navbar-collapse ml-auto collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          
+          
+          
+  
+
+  
+
+  
+
+  
+
+  
+    
+      <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/" class="nav-link">Syllabus</a></li>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+      <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/policies/" class="nav-link">Policies</a></li>
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+      <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/projects/" class="nav-link">Projects</a></li>
+    
+  
+
+  
+    
+      <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/schedule/" class="nav-link">Schedule</a></li>
+    
+  
+
+  
+    
+      <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/staff/" class="nav-link">Staff</a></li>
+    
+  
+
+
+
+
+          <li class="nav-item">
+            <a class="nav-link" href="https://piazza.com/class/jza9erz2ojy3qr">Piazza
+              <i class="fal fa-link"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- Return to Top -->
+<a href="javascript:" id="return-to-top"><i class="fas fa-chevron-up"></i></a>
+
+<script>
+  // ===== Scroll to Top ====
+  $(window).scroll(function() {
+    if ($(this).scrollTop() >= 50) {      // If page is scrolled more than 50px
+      $('#return-to-top').fadeIn(200);    // Fade in the arrow
+    } else {
+      $('#return-to-top').fadeOut(200);   // Else fade out the arrow
+    }
+  });
+  $('#return-to-top').click(function() {  // When arrow is clicked
+    $('body,html').animate({
+      scrollTop : 0                       // Scroll to top of body
+    }, 500);
+  });
+</script>
+
+
+  <script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/jquery.min.js(1).下载" type="text/javascript"></script>
+<script>var $j = jQuery.noConflict(true);</script>
+<script>
+  $(document).ready(function(){
+    console.log($().jquery); // this prints v1.11.0
+    console.log($j().jquery); // this prints v3.1.0
+  });
+</script>
+<script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/parallax.min.js.下载"></script>
+
+<script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/main.min.js.下载"></script>
+
+
+  <div class="container">
+    <!-- <div class="alert alert-info">
+  <i class="far fa-exclamation-triangle"></i>
+  <strong>IMPORTANT ANNOUNCEMENT: Please go to DWINELLE 155 for lecture starting from WED Jun 26, 2019)!!!</strong>
+</div> -->
+
+<!-- <div class="alert alert-warning">
+  <i class="far fa-exclamation-triangle"></i>
+  <strong>Warning: Spring 2020 website is under construction.</strong> There may be misleading information from past semesters on this website, which may be different from the Spring 2020 offering of the course. We will remove this warning when the information on this website is accurate.
+</div> -->
+
+<!-- <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="3800" style="float: left; top: 5em; position: absolute; z-index: 1000">
+  <div class="toast-header">
+    <i class="fal fa-bell"></i>
+    <strong class="mr-auto pl-1">Announcement</strong>
+    <small class="text-white" id="announcementTime"></small>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    <b>Lecture venue for changed AGAIN! Wednesday's (6/26) and future lectures will be held at DWINELLE 155.</b>
+  </div>
+</div> -->
+
+<script>
+  // $('.toast').toast('show')
+  document.getElementById('announcementTime').innerHTML = moment([2019, 5, 25, 21, 35]).fromNow()
+</script>
+
+
+    <div class="row">
+      <div class="col-sm-3">
+  <nav id="toc" data-toggle="toc" class="sticky-top" style="top: 40px; margin-bottom: 40px"><ul class="nav navbar-nav"><li><a class="nav-link" href="https://inst.eecs.berkeley.edu/~cs188/su20/project2/#introduction">Introduction</a></li><li><a class="nav-link" href="https://inst.eecs.berkeley.edu/~cs188/su20/project2/#welcome-to-multi-agent-pacman">Welcome to Multi-Agent Pacman</a></li><li><a class="nav-link" href="https://inst.eecs.berkeley.edu/~cs188/su20/project2/#question-1-4-points-reflex-agent">Question 1 (4 points): Reflex Agent</a></li><li><a class="nav-link" href="https://inst.eecs.berkeley.edu/~cs188/su20/project2/#question-2-5-points-minimax">Question 2 (5 points): Minimax</a></li><li><a class="nav-link" href="https://inst.eecs.berkeley.edu/~cs188/su20/project2/#question-3-5-points-alpha-beta-pruning">Question 3 (5 points): Alpha-Beta Pruning</a></li><li><a class="nav-link" href="https://inst.eecs.berkeley.edu/~cs188/su20/project2/#question-4-5-points-expectimax">Question 4 (5 points): Expectimax</a></li><li><a class="nav-link" href="https://inst.eecs.berkeley.edu/~cs188/su20/project2/#question-5-6-points-evaluation-function">Question 5 (6 points): Evaluation Function</a></li><li><a class="nav-link" href="https://inst.eecs.berkeley.edu/~cs188/su20/project2/#submission">Submission</a></li></ul></nav>
+</div>
+
+      <div class="col-sm-9">
+          <h1 class="mt-0 center">Project 2: Multi-Agent Search</h1>
+
+<center> Version 1.002. Last Updated: 06/22/2020 </center>
+
+<p class="center">Due: <b>Friday 07/10</b> at <b>11:59 pm</b></p>
+
+<hr>
+
+<p><img src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/pacman_multi_agent.png" alt="Pacman maze" class="center-image mb-3 img-fluid" style="width: 400px;"></p>
+
+<center>Pacman, now with ghosts.</center>
+<center>Minimax, Expectimax,</center>
+<center>Evaluation</center>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>In this project, you will design agents for the classic version of Pacman, including ghosts. Along the way, you will implement both minimax and expectimax search and try your hand at evaluation function design.</p>
+
+<p>The code base has not changed much from the previous project, but please start with a fresh installation, rather than intermingling files from project 1.</p>
+
+<p>As in project 1, this project includes an autograder for you to grade your answers on your machine. This can be run on all questions with the command:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock0">python autograder.py
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock0"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p><em>Note:</em> If your <code class="highlighter-rouge">python</code> refers to Python 2.7, you may need to invoke <code class="highlighter-rouge">python3 autograder.py</code> (and similarly for all subsequent Python invocations) or create a conda environment as described in <a href="https://inst.eecs.berkeley.edu/~cs188/su20/project0/#python-installation">Project 0</a>.</p>
+
+<p>It can be run for one particular question, such as q2, by:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock1">python autograder.py <span class="nt">-q</span> q2
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock1"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>It can be run for one particular test by commands of the form:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock2">python autograder.py <span class="nt">-t</span> test_cases/q2/0-small-tree
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock2"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>By default, the autograder displays graphics with the <code class="highlighter-rouge">-t</code> option, but doesn’t with the <code class="highlighter-rouge">-q</code> option. You can force graphics by using the <code class="highlighter-rouge">--graphics</code> flag, or force no graphics by using the <code class="highlighter-rouge">--no-graphics</code> flag.</p>
+
+<p>See the autograder tutorial in Project 0 for more information about using the autograder.</p>
+
+<p>The code for this project contains the following files, available as a <a href="https://inst.eecs.berkeley.edu/~cs188/su20/assets/files/multiagent.zip">zip archive</a>.</p>
+
+<table class="table table-bordered">
+    <tbody>
+      <tr>
+        <td colspan="2"><b>Files you'll edit:</b></td>
+      </tr>
+      <tr>
+        <td><code>multiAgents.py</code></td>
+        <td>Where all of your multi-agent search agents will reside.</td>
+      </tr>
+      <tr>
+        <td colspan="2"><b>Files you might want to look at:</b></td>
+      </tr>
+      <tr>
+        <td><code>pacman.py</code></td>
+        <td>The main file that runs Pacman games. This file also describes a Pacman GameState type, which you will use extensively in this project.</td>
+      </tr>
+      <tr>
+        <td><code>game.py</code></td>
+        <td>The logic behind how the Pacman world works. This file describes several supporting types like AgentState, Agent, Direction, and Grid.</td>
+      </tr>
+      <tr>
+        <td><code>util.py</code></td>
+        <td>Useful data structures for implementing search algorithms. You don't need to use these for this project, but may find other functions defined here to be useful.</td>
+      </tr>
+      <tr>
+        <td colspan="2"><b>Supporting files you can ignore:</b></td>
+      </tr>
+      <tr>
+        <td><code>graphicsDisplay.py</code></td>
+        <td>Graphics for Pacman</td>
+      </tr>
+      <tr>
+        <td><code>graphicsUtils.py</code></td>
+        <td>Support for Pacman graphics</td>
+      </tr>
+      <tr>
+        <td><code>textDisplay.py</code></td>
+        <td>ASCII graphics for Pacman</td>
+      </tr>
+      <tr>
+        <td><code>ghostAgents.py</code></td>
+        <td>Agents to control ghosts</td>
+      </tr>
+      <tr>
+        <td><code>keyboardAgents.py</code></td>
+        <td>Keyboard interfaces to control Pacman</td>
+      </tr>
+      <tr>
+        <td><code>layout.py</code></td>
+        <td>Code for reading layout files and storing their contents</td>
+      </tr>
+      <tr>
+        <td><code>autograder.py</code></td>
+        <td>Project autograder</td>
+      </tr>
+      <tr>
+        <td><code>testParser.py</code></td>
+        <td>Parses autograder test and solution files</td>
+      </tr>
+      <tr>
+        <td><code>testClasses.py</code></td>
+        <td>General autograding test classes</td>
+      </tr>
+      <tr>
+        <td><code>test_cases/</code></td>
+        <td>Directory containing the test cases for each question</td>
+      </tr>
+      <tr>
+        <td class="fit"><code>multiagentTestClasses.py</code></td>
+        <td>Project 2 specific autograding test classes</td>
+      </tr>
+    </tbody>
+  </table>
+
+<p><strong>Files to Edit and Submit:</strong> You will fill in portions of <code class="highlighter-rouge">multiAgents.py</code> during the assignment. Once you have completed the assignment, you will submit a token generated by <code class="highlighter-rouge">submission_autograder.py</code>. Please <em>do not</em> change the other files in this distribution or submit any of our original files other than this file.</p>
+
+<p><strong>Evaluation:</strong> Your code will be autograded for technical correctness. Please <em>do not</em> change the names of any provided functions or classes within the code, or you will wreak havoc on the autograder. However, the correctness of your implementation – not the autograder’s judgements – will be the final judge of your score. If necessary, we will review and grade assignments individually to ensure that you receive due credit for your work.</p>
+
+<p><strong>Academic Dishonesty:</strong> We will be checking your code against other submissions in the class for logical redundancy. If you copy someone else’s code and submit it with minor changes, we will know. These cheat detectors are quite hard to fool, so please don’t try. We trust you all to submit your own work only; <em>please</em> don’t let us down. If you do, we will pursue the strongest consequences available to us.</p>
+
+<p><strong>Getting Help:</strong> You are not alone! If you find yourself stuck on something, contact the course staff for help. Office hours, section, and the discussion forum are there for your support; please use them. If you can’t make our office hours, let us know and we will schedule more. We want these projects to be rewarding and instructional, not frustrating and demoralizing. But, we don’t know when or how to help unless you ask.</p>
+
+<p><strong>Discussion:</strong> Please be careful not to post spoilers.</p>
+
+<hr>
+
+<h2 id="welcome-to-multi-agent-pacman">Welcome to Multi-Agent Pacman</h2>
+
+<p>First, play a game of classic Pacman by running the following command:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock3">python pacman.py
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock3"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>and using the arrow keys to move. Now, run the provided <code class="highlighter-rouge">ReflexAgent</code> in <code class="highlighter-rouge">multiAgents.py</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock4">python pacman.py <span class="nt">-p</span> ReflexAgent
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock4"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>Note that it plays quite poorly even on simple layouts:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock5">python pacman.py <span class="nt">-p</span> ReflexAgent <span class="nt">-l</span> testClassic
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock5"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>Inspect its code (in <code class="highlighter-rouge">multiAgents.py</code>) and make sure you understand what it’s doing.</p>
+
+<hr>
+
+<h2 id="question-1-4-points-reflex-agent">Question 1 (4 points): Reflex Agent</h2>
+
+<p>Improve the <code class="highlighter-rouge">ReflexAgent</code> in <code class="highlighter-rouge">multiAgents.py</code>to play respectably. The provided reflex agent code provides some helpful examples of methods that query the <code class="highlighter-rouge">GameState</code> for information. A capable reflex agent will have to consider both food locations and ghost locations to perform well. Your agent should easily and reliably clear the <code class="highlighter-rouge">testClassic</code> layout:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock6">python pacman.py <span class="nt">-p</span> ReflexAgent <span class="nt">-l</span> testClassic
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock6"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>Try out your reflex agent on the default <code class="highlighter-rouge">mediumClassic</code> layout with one ghost or two (and animation off to speed up the display):</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock7">python pacman.py <span class="nt">--frameTime</span> 0 <span class="nt">-p</span> ReflexAgent <span class="nt">-k</span> 1
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock7"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock8">python pacman.py <span class="nt">--frameTime</span> 0 <span class="nt">-p</span> ReflexAgent <span class="nt">-k</span> 2
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock8"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>How does your agent fare? It will likely often die with 2 ghosts on the default board, unless your evaluation function is quite good.</p>
+
+<p><em>Note:</em> Remember that <code class="highlighter-rouge">newFood</code> has the function <code class="highlighter-rouge">asList()</code></p>
+
+<p><em>Note:</em> As features, try the reciprocal of important values (such as distance to food) rather than just the values themselves.</p>
+
+<p><em>Note:</em> The evaluation function you’re writing is evaluating state-action pairs; in later parts of the project, you’ll be evaluating states.</p>
+
+<p><em>Note:</em> You may find it useful to view the internal contents of various objects for debugging. You can do this by printing the objects’ string representations. For example, you can print <code class="highlighter-rouge">newGhostStates</code> with <code class="highlighter-rouge">print(newGhostStates)</code>.</p>
+
+<p><em>Options:</em> Default ghosts are random; you can also play for fun with slightly smarter directional ghosts using <code class="highlighter-rouge">-g DirectionalGhost</code>. If the randomness is preventing you from telling whether your agent is improving, you can use <code class="highlighter-rouge">-f</code> to run with a fixed random seed (same random choices every game). You can also play multiple games in a row with <code class="highlighter-rouge">-n</code>. Turn off graphics with <code class="highlighter-rouge">-q</code> to run lots of games quickly.</p>
+
+<p><em>Grading:</em> We will run your agent on the <code class="highlighter-rouge">openClassic</code> layout 10 times. You will receive 0 points if your agent times out, or never wins. You will receive 1 point if your agent wins at least 5 times, or 2 points if your agent wins all 10 games. You will receive an addition 1 point if your agent’s average score is greater than 500, or 2 points if it is greater than 1000. You can try your agent out under these conditions with</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock9">python autograder.py <span class="nt">-q</span> q1
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock9"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>To run it without graphics, use:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock10">python autograder.py <span class="nt">-q</span> q1 <span class="nt">--no-graphics</span>
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock10"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>Don’t spend too much time on this question, though, as the meat of the project lies ahead.</p>
+
+<hr>
+
+<h2 id="question-2-5-points-minimax">Question 2 (5 points): Minimax</h2>
+
+<p>Now you will write an adversarial search agent in the provided <code class="highlighter-rouge">MinimaxAgent</code> class stub in <code class="highlighter-rouge">multiAgents.py</code>. Your minimax agent should work with any number of ghosts, so you’ll have to write an algorithm that is slightly more general than what you’ve previously seen in lecture. In particular, your minimax tree will have multiple min layers (one for each ghost) for every max layer.</p>
+
+<p>Your code should also expand the game tree to an arbitrary depth. Score the leaves of your minimax tree with the supplied <code class="highlighter-rouge">self.evaluationFunction</code>, which defaults to <code class="highlighter-rouge">scoreEvaluationFunction</code>. <code class="highlighter-rouge">MinimaxAgent</code> extends <code class="highlighter-rouge">MultiAgentSearchAgent</code>, which gives access to <code class="highlighter-rouge">self.depth</code> and <code class="highlighter-rouge">self.evaluationFunction</code>. Make sure your minimax code makes reference to these two variables where appropriate as these variables are populated in response to command line options.</p>
+
+<p><em>Important:</em> A single search ply is considered to be one Pacman move and all the ghosts’ responses, so depth 2 search will involve Pacman and each ghost moving two times.</p>
+
+<p><em>Grading:</em> We will be checking your code to determine whether it explores the correct number of game states. This is the only reliable way to detect some very subtle bugs in implementations of minimax. As a result, the autograder will be very picky about how many times you call <code class="highlighter-rouge">GameState.generateSuccessor</code>. If you call it any more or less than necessary, the autograder will complain. To test and debug your code, run</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock11">python autograder.py <span class="nt">-q</span> q2
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock11"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>This will show what your algorithm does on a number of small trees, as well as a pacman game. To run it without graphics, use:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock12">python autograder.py <span class="nt">-q</span> q2 <span class="nt">--no-graphics</span>
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock12"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<h4 id="hints-and-observations"><strong><em>Hints and Observations</em></strong></h4>
+
+<ul>
+  <li>Hint: Implement the algorithm recursively using helper function(s).</li>
+  <li>The correct implementation of minimax will lead to Pacman losing the game in some tests. This is not a problem: as it is correct behaviour, it will pass the tests.</li>
+  <li>The evaluation function for the Pacman test in this part is already written (<code class="highlighter-rouge">self.evaluationFunction</code>). You shouldn’t change this function, but recognize that now we’re evaluating <em>states</em> rather than actions, as we were for the reflex agent. Look-ahead agents evaluate future states whereas reflex agents evaluate actions from the current state.</li>
+  <li>
+    <p>The minimax values of the initial state in the <code class="highlighter-rouge">minimaxClassic</code> layout are 9, 8, 7, -492 for depths 1, 2, 3 and 4 respectively. Note that your minimax agent will often win (665/1000 games for us) despite the dire prediction of depth 4 minimax.</p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock13">python pacman.py <span class="nt">-p</span> MinimaxAgent <span class="nt">-l</span> minimaxClassic <span class="nt">-a</span> <span class="nv">depth</span><span class="o">=</span>4
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock13"><i class="fal fa-copy"></i> Copy</a></div>    </div>
+  </li>
+  <li>Pacman is always agent 0, and the agents move in order of increasing agent index.</li>
+  <li>All states in minimax should be <code class="highlighter-rouge">GameStates</code>, either passed in to <code class="highlighter-rouge">getAction</code> or generated via <code class="highlighter-rouge">GameState.generateSuccessor</code>. In this project, you will not be abstracting to simplified states.</li>
+  <li>On larger boards such as <code class="highlighter-rouge">openClassic</code> and <code class="highlighter-rouge">mediumClassic</code> (the default), you’ll find Pacman to be good at not dying, but quite bad at winning. He’ll often thrash around without making progress. He might even thrash around right next to a dot without eating it because he doesn’t know where he’d go after eating that dot. Don’t worry if you see this behavior, question 5 will clean up all of these issues.</li>
+  <li>
+    <p>When Pacman believes that his death is unavoidable, he will try to end the game as soon as possible because of the constant penalty for living. Sometimes, this is the wrong thing to do with random ghosts, but minimax agents always assume the worst:</p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock14">python pacman.py <span class="nt">-p</span> MinimaxAgent <span class="nt">-l</span> trappedClassic <span class="nt">-a</span> <span class="nv">depth</span><span class="o">=</span>3
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock14"><i class="fal fa-copy"></i> Copy</a></div>    </div>
+
+    <p>Make sure you understand why Pacman rushes the closest ghost in this case.</p>
+  </li>
+</ul>
+
+<hr>
+
+<h2 id="question-3-5-points-alpha-beta-pruning">Question 3 (5 points): Alpha-Beta Pruning</h2>
+
+<p>Make a new agent that uses alpha-beta pruning to more efficiently explore the minimax tree, in <code class="highlighter-rouge">AlphaBetaAgent</code>. Again, your algorithm will be slightly more general than the pseudocode from lecture, so part of the challenge is to extend the alpha-beta pruning logic appropriately to multiple minimizer agents.</p>
+
+<p>You should see a speed-up (perhaps depth 3 alpha-beta will run as fast as depth 2 minimax). Ideally, depth 3 on <code class="highlighter-rouge">smallClassic</code> should run in just a few seconds per move or faster.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock15">python pacman.py <span class="nt">-p</span> AlphaBetaAgent <span class="nt">-a</span> <span class="nv">depth</span><span class="o">=</span>3 <span class="nt">-l</span> smallClassic
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock15"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>The <code class="highlighter-rouge">AlphaBetaAgent</code> minimax values should be identical to the <code class="highlighter-rouge">MinimaxAgent</code> minimax values, although the actions it selects can vary because of different tie-breaking behavior. Again, the minimax values of the initial state in the <code class="highlighter-rouge">minimaxClassic</code> layout are 9, 8, 7 and -492 for depths 1, 2, 3 and 4 respectively.</p>
+
+<p><em>Grading:</em> Because we check your code to determine whether it explores the correct number of states, it is important that you perform alpha-beta pruning without reordering children. In other words, successor states should always be processed in the order returned by <code class="highlighter-rouge">GameState.getLegalActions</code>. Again, do not call <code class="highlighter-rouge">GameState.generateSuccessor</code> more than necessary.</p>
+
+<p><strong><em>You must not prune on equality in order to match the set of states explored by our autograder.</em></strong> (Indeed, alternatively, but incompatible with our autograder, would be to also allow for pruning on equality and invoke alpha-beta once on each child of the root node, but this will not match the autograder.)</p>
+
+<p>The pseudo-code below represents the algorithm you should implement for this question.</p>
+
+<p><img src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/alpha_beta_impl.png" alt="Alpha-Beta Implementation" class="center-image mb-3 img-fluid" style="width: 600px;"></p>
+
+<p>To test and debug your code, run</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock16">python autograder.py <span class="nt">-q</span> q3
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock16"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>This will show what your algorithm does on a number of small trees, as well as a pacman game. To run it without graphics, use:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock17">python autograder.py <span class="nt">-q</span> q3 <span class="nt">--no-graphics</span>
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock17"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>The correct implementation of alpha-beta pruning will lead to Pacman losing some of the tests. This is not a problem: as it is correct behaviour, it will pass the tests.</p>
+
+<hr>
+
+<h2 id="question-4-5-points-expectimax">Question 4 (5 points): Expectimax</h2>
+
+<p>Minimax and alpha-beta are great, but they both assume that you are playing against an adversary who makes optimal decisions. As anyone who has ever won tic-tac-toe can tell you, this is not always the case. In this question you will implement the <code class="highlighter-rouge">ExpectimaxAgent</code>, which is useful for modeling probabilistic behavior of agents who may make suboptimal choices.</p>
+
+<p>As with the search and constraint satisfaction problems covered so far in this class, the beauty of these algorithms is their general applicability. To expedite your own development, we’ve supplied some test cases based on generic trees. You can debug your implementation on small the game trees using the command:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock18">python autograder.py <span class="nt">-q</span> q4
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock18"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>Debugging on these small and manageable test cases is recommended and will help you to find bugs quickly.</p>
+
+<p>Once your algorithm is working on small trees, you can observe its success in Pacman. Random ghosts are of course not optimal minimax agents, and so modeling them with minimax search may not be appropriate. <code class="highlighter-rouge">ExpectimaxAgent</code>, will no longer take the min over all ghost actions, but the expectation according to your agent’s model of how the ghosts act. To simplify your code, assume you will only be running against an adversary which chooses amongst their <code class="highlighter-rouge">getLegalActions</code> uniformly at random.</p>
+
+<p>To see how the <code class="highlighter-rouge">ExpectimaxAgent</code> behaves in Pacman, run:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock19">python pacman.py <span class="nt">-p</span> ExpectimaxAgent <span class="nt">-l</span> minimaxClassic <span class="nt">-a</span> <span class="nv">depth</span><span class="o">=</span>3
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock19"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>You should now observe a more cavalier approach in close quarters with ghosts. In particular, if Pacman perceives that he could be trapped but might escape to grab a few more pieces of food, he’ll at least try. Investigate the results of these two scenarios:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock20">python pacman.py <span class="nt">-p</span> AlphaBetaAgent <span class="nt">-l</span> trappedClassic <span class="nt">-a</span> <span class="nv">depth</span><span class="o">=</span>3 <span class="nt">-q</span> <span class="nt">-n</span> 10
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock20"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock21">python pacman.py <span class="nt">-p</span> ExpectimaxAgent <span class="nt">-l</span> trappedClassic <span class="nt">-a</span> <span class="nv">depth</span><span class="o">=</span>3 <span class="nt">-q</span> <span class="nt">-n</span> 10
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock21"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>You should find that your <code class="highlighter-rouge">ExpectimaxAgent</code> wins about half the time, while your <code class="highlighter-rouge">AlphaBetaAgent</code> always loses. Make sure you understand why the behavior here differs from the minimax case.</p>
+
+<p>The correct implementation of expectimax will lead to Pacman losing some of the tests. This is not a problem: as it is correct behaviour, it will pass the tests.</p>
+
+<hr>
+
+<h2 id="question-5-6-points-evaluation-function">Question 5 (6 points): Evaluation Function</h2>
+
+<p>Write a better evaluation function for pacman in the provided function <code class="highlighter-rouge">betterEvaluationFunction</code>. The evaluation function should evaluate states, rather than actions like your reflex agent evaluation function did. With depth 2 search, your evaluation function should clear the <code class="highlighter-rouge">smallClassic</code> layout with one random ghost more than half the time and still run at a reasonable rate (to get full credit, Pacman should be averaging around 1000 points when he’s winning).</p>
+
+<p><em>Grading:</em> the autograder will run your agent on the smallClassic layout 10 times. We will assign points to your evaluation function in the following way:</p>
+
+<ul>
+  <li>If you win at least once without timing out the autograder, you receive 1 points. Any agent not satisfying these criteria will receive 0 points.</li>
+  <li>+1 for winning at least 5 times, +2 for winning all 10 times</li>
+  <li>+1 for an average score of at least 500, +2 for an average score of at least 1000 (including scores on lost games)</li>
+  <li>+1 if your games take on average less than 30 seconds on the autograder machine, when run with <code class="highlighter-rouge">--no-graphics</code>. The autograder is run on EC2, so this machine will have a fair amount of resources, but your personal computer could be far less performant (netbooks) or far more performant (gaming rigs).</li>
+  <li>The additional points for average score and computation time will only be awarded if you win at least 5 times.</li>
+  <li>Please do not copy any files from Project 1, as it will not pass the autograder on Gradescope.</li>
+</ul>
+
+<p>You can try your agent out under these conditions with</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock22">python autograder.py <span class="nt">-q</span> q5
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock22"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<p>To run it without graphics, use:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code id="codeBlock23">python autograder.py <span class="nt">-q</span> q5 <span class="nt">--no-graphics</span>
+</code></pre><a type="btn" class="badge badge-light btn-copy-code" data-clipboard-target="#codeBlock23"><i class="fal fa-copy"></i> Copy</a></div></div>
+
+<hr>
+
+<h2 id="submission">Submission</h2>
+
+<p>In order to submit your project, run <code class="highlighter-rouge">python submission_autograder.py</code> and submit the generated token file <code class="highlighter-rouge">multiagent.token</code> to the <code class="highlighter-rouge">Project 2</code> assignment on Gradescope.</p>
+
+      </div>
+    </div>
+    <footer class="py-4 container">
+  <div class="row text-center">
+    <div class="col-md-6 col-sm-12">
+      <h3 data-toc-skip=""><a href="javascript:void(0)">CS 188</a></h3>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/schedule" class="nav-link">Weekly Schedule</a>
+        </li>
+        <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/schedule" class="nav-link">Office Hours</a>
+        </li>
+        <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/staff" class="nav-link">Staff</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-md-6 col-sm-12">
+      <h3 data-toc-skip=""><a href="https://inst.eecs.berkeley.edu/~cs188/su20/policies">Policies</a></h3>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/policies/#Assignments" class="nav-link">Assignments</a>
+        </li>
+        <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/policies/#Exams" class="nav-link">Exams</a>
+        </li>
+        <li class="nav-item"><a href="https://inst.eecs.berkeley.edu/~cs188/su20/policies/#Grading" class="nav-link">Grading</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/clipboard.min.js.下载"></script>
+  <script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/codeselect.js.下载"></script>
+</footer>
+
+  </div>
+
+
+
+<!-- <script>w3.includeHTML();</script> -->
+
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/ie10-viewport-bug-workaround.js.下载"></script>
+
+
+
+<gdiv class="ginger-extension-writer" style="display: none;"><gdiv class="ginger-extension-writer-frame"><iframe src="./Project 2 - Multi-Agent Search - CS 188_ Introduction to Artificial Intelligence, Summer 2020_files/index.html"></iframe></gdiv></gdiv></body></html>
